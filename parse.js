@@ -1,8 +1,20 @@
 var rules = require('./rules.js')
 
-var amendements = require('./renseignement.out.json').amendements;
+var amendements = require('./data/renseignement.json').amendements;
+
+// Temporary
+function preprocess(txt) {
+  return txt.replace(/\s/g, ' ');
+}
 
 amendements.forEach(function(row, i){
-	console.log(rules.parse(row.amendement.texte))
+
+  var result = rules.parse(preprocess(row.amendement.texte));
+
+  // Adding original amendement for reference and debugging
+  if (result)
+    result.amendement = row.amendement.texte;
+
+  console.log(result);
 })
 
