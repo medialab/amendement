@@ -19,6 +19,17 @@ function MyCustomGrammar() {
   );
 
   def(
+    /l'alinéa (\d+), supprimer les? mots? :.*?« ([^»]*) »/,
+    function(where, target) {
+      return {
+        operation: 'supprimer',
+        alinea: +where,
+        target: target
+      };
+    }
+  );
+
+  def(
     /Supprimer l'alinéa (\d+)/,
     function(where) {
       return {
