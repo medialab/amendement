@@ -10,7 +10,7 @@ function MyCustomGrammar() {
     /l'alinéa (\d+), substituer aux? mots? :.*?« ([^»]*) ».*?les? mots? :.*?« ([^»]*) »/,
     function(where, target, replacement) {
       return {
-        operation: 'substituer',
+        operation: 'substituer:mots',
         alinea: +where,
         target: target,
         replacement: replacement
@@ -22,7 +22,7 @@ function MyCustomGrammar() {
     /Après l'alinéa (\d+), insérer l'alinéa suivant :.*?« ([^»]*) »/,
     function(where, newAlinea) {
       return {
-        operation: 'creer',
+        operation: 'creer:alinea',
         alinea: +where,
         content: newAlinea
       };
@@ -33,7 +33,7 @@ function MyCustomGrammar() {
     /l'alinéa (\d+), supprimer les? mots? :.*?« ([^»]*) »/,
     function(where, target) {
       return {
-        operation: 'supprimer',
+        operation: 'supprimer:mots',
         alinea: +where,
         target: target
       };
@@ -41,10 +41,32 @@ function MyCustomGrammar() {
   );
 
   def(
+    /Supprimer les alinéas (\d+) (à|et) (\d+)/,
+    function(from, operand, to) {
+      var order = {
+        operation: 'supprimer:alinea'
+      };
+
+      if (operand === 'à') {
+        order.from = +from;
+        order.to = +to;
+      }
+      else if (operand === 'et') {
+        order.alineas = [+from, +to];
+      }
+      else {
+        throw Error('supprimer:alinea rule - unknown operand "' + operand + '".');
+      }
+
+      return order;
+    }
+  );
+
+  def(
     /Supprimer l'alinéa (\d+)/,
     function(where) {
       return {
-        operation: 'supprimer',
+        operation: 'supprimer:alinea',
         alinea: +where
       };
     }
@@ -54,7 +76,7 @@ function MyCustomGrammar() {
     /.*(compléter).*alinéa (\d+).*«([^»]*)»/i,
     function(operation, where, content) {
       return {
-        operation : 'completer',
+        operation : 'ajouter:mots',
         alinea: +where,
         content: content.trim()
       }
