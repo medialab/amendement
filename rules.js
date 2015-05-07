@@ -94,7 +94,7 @@ function MyCustomGrammar() {
   );
 
   def(
-    /Amendement irrecevable/,
+    /(Amendement irrecevable|Cet amendement a été déclaré irrecevable)/,
     function() {
 
       // TODO: parse the reason?
