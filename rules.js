@@ -39,7 +39,7 @@ function MyCustomGrammar() {
 
       return type
     }
-  ); 
+  );
 
   def(
     /(À (la (première|seconde|deuxième|troisième) phrase de )?l'alinéa (\d+), )?après (les? mots?|l(a|es?) références?) :.*?« ([^»]*) »,insérer (les? mots?|l(a|es?) références?) :.*?« ([^»]*) »/i,
