@@ -12,7 +12,10 @@ function preprocess(txt) {
 
 var matches = 0;
 
-amendements.forEach(function(row, i){
+var amendements_recevables = amendements.filter(function(row){
+  return row.amendement.sort !== "Irrecevable";
+});
+amendements_recevables.forEach(function(row, i){
   var amendement = preprocess(row.amendement.texte);
 
   var result = rules.parse(preprocess(amendement));
@@ -21,11 +24,11 @@ amendements.forEach(function(row, i){
   var output = '';
 
   if (!result) {
-    output = chalk.red('No match for:') + ' ' + _.trunc(amendement, 100);
+    output = chalk.red('No match for:') + ' ' + amendement; //_.trunc(amendement, 100)
   }
   else {
     matches++;
-    output = chalk.green('Match for:') + ' ' + _.trunc(amendement, 100);
+    output = chalk.green('Match for:') + ' ' + amendement; //_.trunc(amendement, 100);
     output += '\n' + util.inspect(result);
   }
 
@@ -35,4 +38,4 @@ amendements.forEach(function(row, i){
 });
 
 // Outputting report
-console.log(chalk.blue('Report: ') + matches + '/' + amendements.length + ' amendements.\n');
+console.log(chalk.blue('Report: ') + matches + '/' + amendements_recevables.length + ' amendements.\n');
