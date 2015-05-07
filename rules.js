@@ -86,10 +86,22 @@ function MyCustomGrammar() {
     /.*(compléter).*alinéa (\d+).*«([^»]*)»/i,
     function(operation, where, content) {
       return {
-        operation : 'ajouter:mots',
+        operation: 'ajouter:mots',
         alinea: +where,
         content: content.trim()
       }
+    }
+  );
+
+  def(
+    /Amendement irrecevable/,
+    function() {
+
+      // TODO: parse the reason?
+      return {
+        operation: 'supprimer:amendement',
+        irrecevable: true
+      };
     }
   );
 }
