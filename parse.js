@@ -13,7 +13,7 @@ function preprocess(txt) {
 var matches = 0;
 
 var amendements_recevables = amendements.filter(function(row){
-  return !(row.amendement.sort !== "Irrecevable" &&
+  return !(row.amendement.sort === "Irrecevable" ||
          row.amendement.sujet.match(/^article additionnel/i));
 });
 amendements_recevables.forEach(function(row, i){
