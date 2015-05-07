@@ -7,6 +7,16 @@ function MyCustomGrammar() {
   var def = this.def.bind(this);
 
   def(
+    /Compléter (?:cet |l')amendement par la phrase suivante :.*?« ([^»]*) »/,
+    function(content) {
+      return {
+        operation: 'ajouter:mots',
+        content: content
+      };
+    }
+  );
+
+  def(
     /l'alinéa (\d+), substituer aux? mots? :.*?« ([^»]*) ».*?les? mots? :.*?« ([^»]*) »/,
     function(where, target, replacement) {
       return {
