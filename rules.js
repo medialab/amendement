@@ -19,6 +19,16 @@ function MyCustomGrammar() {
   );
 
   def(
+    /Supprimer l'alinéa (\d+)/,
+    function(where) {
+      return {
+        operation: 'supprimer',
+        alinea: +where
+      };
+    }
+  );
+
+  def(
     /.*(compléter).*alinéa (\d+).*«([^»]*)»/i,
     function(operation, where, content) {
       return {
