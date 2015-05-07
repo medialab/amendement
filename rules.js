@@ -7,7 +7,7 @@ function MyCustomGrammar() {
   var def = this.def.bind(this);
 
   def(
-    /l'alinéa (\d+), substituer aux mots :.*?« ([^»]*) ».*?les mots :.*?« ([^»]*) »/,
+    /l'alinéa (\d+), substituer aux? mots? :.*?« ([^»]*) ».*?les? mots? :.*?« ([^»]*) »/,
     function(where, target, replacement) {
       return {
         operation: 'substituer',
