@@ -5,6 +5,12 @@ function Grammar() {
  
   // Defining a rule
   this.def = function(regex, fn) {
+    if (!(regex instanceof RegExp) && Array.isArray(regex))
+      regex = new RegExp(regex.join(''), 'i');
+
+    if (!(regex instanceof RegExp))
+      throw Error('T\'as merdé Johnny!');
+
     this.rules.push({regex: regex, fn: fn});
     return this;
   };

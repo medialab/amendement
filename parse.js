@@ -2,12 +2,16 @@ var chalk = require('chalk'),
     util = require('util'),
     rules = require('./rules.js'),
     _ = require('lodash');
+    requireDir = require('require-dir');
 
 var amendements = require('./data/renseignement.json').amendements;
+var scaling = requireDir('./data/amdmts/');
+
+//amendements = _(scaling).values().map('amendements').flatten().value().concat(amendements);
 
 // Temporary
 function preprocess(txt) {
-  return txt.replace(/\s/g, ' ').replace(/(<p>|<\/p>)/g, '');
+  return txt.replace(/\s/g, ' ').replace(/<\/p><p>/g, ' ').replace(/(<p>|<\/p>)/g, '');
 }
 
 var matches = 0;
@@ -19,7 +23,7 @@ var amendements_recevables = amendements.filter(function(row){
 amendements_recevables.forEach(function(row, i){
   var amendement = preprocess(row.amendement.texte);
 
-  var result = rules.parse(preprocess(amendement));
+  var result = rules.parse(amendement);
 
   // Formatting output
   var output = '';

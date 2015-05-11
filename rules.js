@@ -18,8 +18,8 @@ function MyCustomGrammar() {
   );
 
   def(
-    /l'alinéa (\d+), substituer aux? (mots?|nombres?) :.*?« ([^»]*) ».*?(les? mots?|les? nombres?|la phrase et les? mots? suivants?|l(a|es) références?) :.*?« ([^»]*) »/,
-    function(where, type1, target, type2, uselesse, replacement) {
+    /(?:(?:À (la fin de )?|(Au début de )?)(?:la (première|seconde|deuxième|troisième) phrase de )?l'alinéa (\d+), )?substituer (?:aux? mots?|aux? nombres?|(?:à la|aux) références?) :.*?« ([^»]*) ».*?(les? mots?|les? nombres?|la phrase et les? mots? suivants?|(?:la|les?) références?) ?:.*?« ([^»]*) »/,
+    function(fin, debut, phrase, where, target, typereplace, replacement) {
       var type = {
         IDrule: 2,
         operation: 'substituer:',
@@ -28,13 +28,22 @@ function MyCustomGrammar() {
         replacement: replacement
       };
 
-      if (type2.match(/la phrase et les? mots? suivants?/))
+      if (phrase != undefined)
+        type.phrase = phrase
+
+      if (fin != undefined)
+        type.fin = "fin"
+
+      if (debut != undefined)
+        type.debut = "début"
+
+      if (typereplace.match(/la phrase et les? mots? suivants?/))
         type.operation += "phrase";
-      else if (type2.match(/les? nombres?/))
+      else if (typereplace.match(/les? nombres?/))
         type.operation += "nombre";
-      else if (type2.match(/les? mots?/))
+      else if (typereplace.match(/les? mots?/))
         type.operation += "mot";
-      else if (type2.match(/référence/))
+      else if (typereplace.match(/référence/))
         type.operation += "référence";
 
       return type
@@ -42,38 +51,36 @@ function MyCustomGrammar() {
   );
 
   def(
-    /(À (la (première|seconde|deuxième|troisième) phrase de )?l'alinéa (\d+), )?après (les? mots?|l(a|es?) références?) :.*?« ([^»]*) »,insérer (les? mots?|l(a|es?) références?) :.*?« ([^»]*) »/i,
-    function(useless, phrase, numerophrase, where, type1, useless1, target, type2, useless2, replacement) {
+    /(?:(?:(?:À |A )(la fin de )?|(Au début de )?)(?:la (première|seconde|deuxième|troisième) phrase de )?l'alinéa (\d+), )?(?:après (?:la (première|dernière) occurrence de )?(?:les? mots?|l(?:a|es?) références?) :.*?« ([^»]*) », )?insérer (les? mots?|(?:la|les?) références?) :.*?« ([^»]*) »/i,
+    function(fin, debut, phrase, where, occurrence, target, typereplace, replacement) {
       var type = {
         IDrule: 3,
         operation: 'insérer:',
         alinea: +where,
-        target: target,
+   
         replacement: replacement
       };
 
       if (phrase != undefined)
-        type.phrase = numerophrase
+        type.phrase = phrase
 
-      if (type2.match(/les? mots?/))
+      if (target!= undefined)
+        type.target = target
+
+      if (debut != undefined)
+        type.debut = "début"
+
+      if (occurrence == 'première')
+        type.occurrence = "première occurrence"
+      else if (occurrence == 'dernière')
+        type.occurrence == "dernière occurrence"
+
+      if (typereplace.match(/les? mots?/))
         type.operation += "mot";
-      else if (type2.match(/(la|es) références?/))
+      else if (typereplace.match(/(la|les) références?/))
         type.operation += "référence";
 
       return type
-    }
-  );
-
-  def(
-    /À la (première|seconde|deuxième|troisième) phrase de l'alinéa (\d+), substituer aux? mots? :.*?« ([^»]*) ».*?les? mots?:.*?« ([^»]*) »/,
-    function(phrase, where, target, replacement) {
-      return {
-        IDrule: 8,
-        operation: 'substituer:mot',
-        alinea: +where,
-        target: target,
-        replacement: replacement
-      };
     }
   );
 
@@ -90,7 +97,7 @@ function MyCustomGrammar() {
   );
 
   def(
-    /(Au début de |À (la (première|seconde|deuxième|troisième|quatrième) phrase de )?)l'alinéa (\d+), supprimer les? mots? :.*?« ([^»]*) »/,
+    /(?:(?:À (la fin de )?|(Au début de )?)(?:la (première|seconde|deuxième|troisième) phrase de )?l'alinéa (\d+), )?supprimer les? mots? :.*?« ([^»]*) »/i,
     function(precision, useless, phrase, where, target) {
       var alaphrase = {
         IDrule: 6,
@@ -108,7 +115,7 @@ function MyCustomGrammar() {
   );
 
   def(
-    /(Après (la (première|seconde|deuxième|troisième|quatrième) phrase de ))l'alinéa (\d+), insérer la phrase suivante :.*?« ([^»]*) »/,
+    /(?:(?:À (la fin de )?|(Au début de )?)(?:la (première|seconde|deuxième|troisième) phrase de )?l'alinéa (\d+), )?insérer (les? mots?|la phrase suivante|(?:la|les) réferences?) :.*?« ([^»]*) »/,
     function(useless1, useless2, phrase, where, target) {
       return {
         IDrule: 4,
@@ -117,6 +124,7 @@ function MyCustomGrammar() {
         phrase: phrase,
         target: target
       }
+
     }
   );
 
@@ -190,18 +198,18 @@ function MyCustomGrammar() {
     }
   );
 
-  def(
-    /(Au début|À la fin) de l'alinéa (\d+), insérer les? mots? :.*?« ([^»]*) »/,
-    function(precision, where, content) {
-      return {
-        IDrule: 11,
-        operation: 'insérer:mots',
-        alinea: +where,
-        precision: precision,
-        content: content
-      }
-    }
-  );
+  // def(
+  //   /(Au début|À la fin) de l'alinéa (\d+), insérer les? mots? :.*?« ([^»]*) »/,
+  //   function(precision, where, content) {
+  //     return {
+  //       IDrule: 11,
+  //       operation: 'insérer:mots',
+  //       alinea: +where,
+  //       precision: precision,
+  //       content: content
+  //     }
+  //   }
+  // );
 
   def(
     /(Amendement irrecevable|Cet amendement a été déclaré irrecevable)/,
