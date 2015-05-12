@@ -7,7 +7,7 @@ function MyCustomGrammar() {
   var def = this.def.bind(this);
 
   def(
-    /Compléter (?:cet |l')amendement par la phrase suivante :.*?« ([^»]*) »/,
+    /compléter (?:(?:cet |l')amendement|(?:cet |l')article) par (?:la phrase|l'alinéa) suivante? :.*?« ([^»]*) »/gi,
     function(content) {
       return {
         IDrule: 1,
@@ -88,7 +88,7 @@ function MyCustomGrammar() {
     /Après l'alinéa (\d+), insérer l'alinéa suivant :.*?« ([^»]*) »/,
     function(where, newAlinea) {
       return {
-        IDrule: 5,
+        IDrule: 4,
         operation: 'creer:alinea',
         alinea: +where,
         content: newAlinea
@@ -97,34 +97,47 @@ function MyCustomGrammar() {
   );
 
   def(
-    /(?:(?:À (la fin de )?|(Au début de )?)(?:la (première|seconde|deuxième|troisième) phrase de )?l'alinéa (\d+), )?supprimer les? mots? :.*?« ([^»]*) »/i,
-    function(precision, useless, phrase, where, target) {
-      var alaphrase = {
-        IDrule: 6,
+    /(?:(?:À (la fin de )?|(Au début de )?)(?:la (première|seconde|deuxième|troisième) phrase de )?l'alinéa (\d+), )?supprimer (?:les? mots?|la phrase suivante|(?:la|les) réferences?) :.*?« ([^»]*) »/i,
+    function(fin, debut, phrase, where, target) {
+      var type = {
+        IDrule: 5,
         operation: 'supprimer:mots',
         alinea: +where,
-      }
-
-      if (phrase != undefined) {
-        alaphrase.phrase = phrase
+        target: target
       };
 
-      alaphrase.target = target;
-      return alaphrase
+      if (phrase != undefined)
+        type.phrase = phrase
+
+      if (fin != undefined)
+        type.fin = 'fin'
+      else if (debut != undefined)
+        type.debut = 'debut'
+
+      return type
     }
   );
 
   def(
-    /(?:(?:À (la fin de )?|(Au début de )?)(?:la (première|seconde|deuxième|troisième) phrase de )?l'alinéa (\d+), )?insérer (les? mots?|la phrase suivante|(?:la|les) réferences?) :.*?« ([^»]*) »/,
-    function(useless1, useless2, phrase, where, target) {
-      return {
-        IDrule: 4,
+    /(?:(?:À (la fin de )?|(Au début de )?)(?:la (première|seconde|deuxième|troisième) phrase de )?l'alinéa (\d+), )?insérer (?:les? mots?|la phrase suivante|(?:la|les) réferences?) :.*?« ([^»]*) »/i,
+    function(fin, debut, phrase, where, target) {
+      var type = {
+        IDrule: 6,
         operation: 'insérer:phrase',
         alinea: +where,
         phrase: phrase,
         target: target
-      }
+      };
 
+      if (phrase != undefined)
+        type.phrase = phrase
+
+      if (fin != undefined)
+        type.fin = 'fin'
+      else if (debut != undefined)
+        type.debut = 'debut'
+
+      return type
     }
   );
 
@@ -152,25 +165,28 @@ function MyCustomGrammar() {
   );
 
   def(
-    /Supprimer l'alinéa (\d+)/,
-    function(where) {
-      return {
+    /Supprimer ((?:la (première|seconde|deuxième|troisième) phrase de )?l'alinéa (\d+)|cet article)/,
+    function(what, phrase, where) {
+      var type = {
         IDrule: 8,
-        operation: 'supprimer:alinea',
-        alinea: +where
+        operation: 'supprimer:',
       };
-    }
-  );
 
-  def(
-    /Supprimer la (première|seconde|deuxième|troisième|quatrième) phrase de l'alinéa (\d+)/,
-    function(phrase, where) {
-      return {
-        IDrule: 13,
-        operation: 'supprimer:phrase',
-        phrase: phrase,
-        alinea: +where
-      };
+      if (phrase != undefined) {
+        type.operation += 'phrase';
+        type.phrase = phrase;
+      }
+
+      if (what.match(/article/))
+        type.operation += 'article';
+
+      if (what.match(/alinéa/))
+        type.operation += 'alinea';
+
+      if (where != undefined)
+        type.where = +where
+
+      return type;
     }
   );
 
@@ -198,26 +214,13 @@ function MyCustomGrammar() {
     }
   );
 
-  // def(
-  //   /(Au début|À la fin) de l'alinéa (\d+), insérer les? mots? :.*?« ([^»]*) »/,
-  //   function(precision, where, content) {
-  //     return {
-  //       IDrule: 11,
-  //       operation: 'insérer:mots',
-  //       alinea: +where,
-  //       precision: precision,
-  //       content: content
-  //     }
-  //   }
-  // );
-
   def(
     /(Amendement irrecevable|Cet amendement a été déclaré irrecevable)/,
     function() {
 
       // TODO: parse the reason?
       return {
-        IDrule: 12,
+        IDrule: 11,
         operation: 'supprimer:amendement',
         irrecevable: true
       };
