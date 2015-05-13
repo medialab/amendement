@@ -5,9 +5,10 @@
  */
 var chalk = require('chalk'),
     util = require('util'),
+    requireDir = require('require-dir'),
     rules = require('./rules.js'),
+    process = require('./process.js'),
     _ = require('lodash');
-    requireDir = require('require-dir');
 
 var amendements = require('./data/renseignement.json').amendements;
 
@@ -19,30 +20,23 @@ function preprocess(txt) {
   return txt.replace(/\s/g, ' ').replace(/<\/p><p>/g, ' ').replace(/(<p>|<\/p>)/g, '');
 }
 
-var matches = 0;
+var matches = 0,
+    results = [],
+    recevables = process(amendements);
 
-var amendements_recevables = amendements.filter(function(row){
-  return !(row.amendement.sort === "Irrecevable" ||
-         row.amendement.sujet.match(/^article additionnel/i)) &&
-         row.amendement.source.match(/assemblee-nationale/);
-});
+recevables.forEach(function(amendement, i){
+  var result = rules.parse(amendement.texte);
 
-var results = [];
-
-amendements_recevables.forEach(function(row, i){
-  var amendement = preprocess(row.amendement.texte);
-
-  var result = rules.parse(amendement);
   results.push(result);
   // Formatting output
   var output = '';
 
   if (!result) {
-    output = chalk.red('No match for:') + ' ' + amendement; //_.trunc(amendement, 100)
+    output = chalk.red('No match for:') + ' ' + amendement.texte; //_.trunc(amendement.texte, 100)
   }
   else {
     matches++;
-    output = chalk.green('Match for:') + ' ' + amendement; //_.trunc(amendement, 100);
+    output = chalk.green('Match for:') + ' ' + amendement.texte; //_.trunc(amendement.texte, 100);
     output += '\n' + util.inspect(result);
   }
 
@@ -58,7 +52,7 @@ function prettyass(number) {
 }
 
 // Outputting report
-console.log(chalk.blue('Report: ') + prettyass(matches) + ' / ' + prettyass(amendements_recevables.length) + ' amendements.\n');
+console.log(chalk.blue('Report: ') + prettyass(matches) + ' / ' + prettyass(recevables.length) + ' amendements.\n');
 
 _(results)
   .groupBy('name')

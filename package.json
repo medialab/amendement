@@ -34,7 +34,8 @@
     "codemirror": "^5.2.0",
     "djax": "^1.1.0",
     "lodash": "^3.8.0",
-    "react-bootstrap": "^0.21.2"
+    "react-bootstrap": "^0.21.2",
+    "require-dir": "^0.3.0"
   },
   "devDependencies": {
     "babel-core": "^5.2.9",
