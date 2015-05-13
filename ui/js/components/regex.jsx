@@ -22,7 +22,7 @@ export default class Regex extends Component {
     this.editor = CodeMirror.fromTextArea(
       node,
       {
-        theme: 'base16-default-dark',
+        theme: 'base16-dark',
         mode: 'regex',
         lineWrapping: true
       }
