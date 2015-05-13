@@ -25,7 +25,7 @@ recevables.forEach(a => a.texte = preprocess(a.texte));
 var state = {
   amendements: recevables,
   regex: null,
-  rules: grammar.rules.map(r => r.regex)
+  rules: grammar.rules
 };
 
 export default new Baobab(state, {

@@ -28,10 +28,10 @@ class Rule extends Component {
   };
 
   handleClick() {
-    this.context.tree.set('regex', this.props.data.source);
+    this.context.tree.set('regex', this.props.data.regex.source);
   }
 
   render() {
-    return <li onClick={this.handleClick.bind(this)}>{`Rule n°${this.props.order}`}</li>;
+    return <li onClick={this.handleClick.bind(this)}>{`Rule : ${this.props.data.name}`}</li>;
   }
 }

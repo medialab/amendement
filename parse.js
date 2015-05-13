@@ -6,8 +6,8 @@ var chalk = require('chalk'),
 
 var amendements = require('./data/renseignement.json').amendements;
 
-var scaling = requireDir('./data/amdmts/');
-amendements = _(scaling).values().map('amendements').flatten().value().concat(amendements);
+// var scaling = requireDir('./data/amdmts/');
+// amendements = _(scaling).values().map('amendements').flatten().value().concat(amendements);
 
 // Temporary
 function preprocess(txt) {
@@ -43,8 +43,7 @@ amendements_recevables.forEach(function(row, i){
 
   output += '\n';
 
-  if (output.match(/IDrule: 7/)) 
-    console.log(output);
+  console.log(output);
 });
 
 function prettyass(number) {
@@ -57,7 +56,7 @@ function prettyass(number) {
 console.log(chalk.blue('Report: ') + prettyass(matches) + ' / ' + prettyass(amendements_recevables.length) + ' amendements.\n');
 
 _(results)
-  .groupBy('IDrule')
+  .groupBy('name')
   .forIn(function(value, key) {
     console.log(chalk.magenta('Rule n°' + key), '-', value.length);
   })

@@ -7,7 +7,7 @@ function MyCustomGrammar() {
   var def = this.def.bind(this);
 
   def(
-    'Complete'
+    'Complete',
     /Compléter ?(ainsi )?(?:la (première|seconde|deuxième|troisième|dernière) phrase de )?(?:(?:cet |l')amendement|(?:cet |l')article|(?:cet |l')alinéa (\d+))( par (?:la phrase|l'alinéa|les? mots?|les? mots? et la phrase))?(?: suivant[es]?)? ? ?:.*?« ([^»]*) »/gi,
     function(content) {
       return {
@@ -18,19 +18,8 @@ function MyCustomGrammar() {
     }
   );
 
-  // def(
-  //   /.*(compléter).*alinéa (\d+).*«([^»]*)»/i,
-  //   function(operation, where, content) {
-  //     return {
-  //       IDrule: 7,
-  //       operation: 'ajouter:mots',
-  //       alinea: +where,
-  //       content: content.trim()
-  //     }
-  //   }
-  // );
-
   def(
+    'Substituer',
     /(?:(?:À (la fin de )?|(Au début de )?)(?:la (première|seconde|deuxième|troisième) phrase de )?l'alinéa (\d+), )?substituer (?:aux? mots?|aux? nombres?|(?:à la|aux) références?) :.*?« ([^»]*) ».*?(les? mots?|les? nombres?|la phrase et les? mots? suivants?|(?:la|les?) références?) ?:.*?« ([^»]*) »/,
     function(fin, debut, phrase, where, target, typereplace, replacement) {
       var type = {
@@ -64,6 +53,7 @@ function MyCustomGrammar() {
   );
 
   def(
+    'Insérer',
     /(?:(?:(?:À |A )(la fin de )?|(Au début de )?)(?:la (première|seconde|deuxième|troisième|dernière) phrase de )?l'alinéa (\d+), )?(?:après (?:la (première|dernière) occurrence de )?(?:les? mots?|l(?:a|es?) références?) :.*?« ([^»]*) », )?insérer (les? mots?|la phrase suivante|(?:la|les) réferences?) :.*?« ([^»]*) »/i,
     function(fin, debut, phrase, where, occurrence, target, typereplace, replacement) {
       var type = {
@@ -97,6 +87,7 @@ function MyCustomGrammar() {
   );
 
   def(
+    'Insérer al.',
     /Après l'alinéa (\d+), insérer l'alinéa suivant :.*?« ([^»]*) »/,
     function(where, newAlinea) {
       return {
@@ -109,6 +100,7 @@ function MyCustomGrammar() {
   );
 
   def(
+    'Supprimer',
     /(?:(?:À (la fin de )?|(Au début de )?)(?:la (première|seconde|deuxième|troisième) phrase de )?l'alinéa (\d+), )?supprimer (?:les? mots?|la phrase suivante|(?:la|les) réferences?) :.*?« ([^»]*) »/i,
     function(fin, debut, phrase, where, target) {
       var type = {
@@ -131,6 +123,7 @@ function MyCustomGrammar() {
   );
 
   def(
+    'Supprimer al.',
     /Supprimer ((?:la (première|seconde|deuxième|troisième) phrase de )?(?:l'alinéa|les alinéas)? (\d+)(?: (à|et) (\d+))?|cet article)/,
     function(what, phrase, from, operand, to) {
       var type = {
@@ -171,6 +164,7 @@ function MyCustomGrammar() {
   );
 
   def(
+    'Rédiger ainsi',
     /Rédiger ainsi.*alinéa (\d+) :.*?« ([^»]*) »/i,
     function(where, content) {
       return {
@@ -183,6 +177,7 @@ function MyCustomGrammar() {
   );
 
   def(
+    'Irrecevable',
     /(Amendement irrecevable|Cet amendement a été déclaré irrecevable)/,
     function() {
 
