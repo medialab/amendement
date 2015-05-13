@@ -1,4 +1,4 @@
-var Grammar = require('./grammar.js')
+var Grammar = require('./lib/grammar.js')
 
 function MyCustomGrammar() {
 
