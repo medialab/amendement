@@ -2,8 +2,7 @@
 
 .CodeMirror {
   /* Set height, width, borders, and global font properties here */
-  font-family: "NovelMonoPro-Regular", Arial, sans-serif;
-  text-rendering: optimizeLegibility;
+  font-family: sans-serif;
   font-size: 16px;
   line-height: 1.65em;
   height: 100%;
