@@ -12,8 +12,8 @@ var chalk = require('chalk'),
 
 var amendements = require('./data/renseignement.json').amendements;
 
-// var scaling = requireDir('./data/amdmts/');
-// amendements = _(scaling).values().map('amendements').flatten().value().concat(amendements);
+//var scaling = requireDir('./data/amdmts/');
+//amendements = _(scaling).values().map('amendements').flatten().value().concat(amendements);
 
 // Temporary
 function preprocess(txt) {
@@ -42,7 +42,8 @@ recevables.forEach(function(amendement, i){
 
   output += '\n';
 
-  console.log(output);
+  if (output.match(/name: 'Complete'/))
+    console.log(output);
 });
 
 function prettyass(number) {
