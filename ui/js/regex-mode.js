@@ -8,24 +8,24 @@ CodeMirror.defineMode("regex", function() {
     var ch = stream.next();
 
     if (ch == "\\" && stream.match(/./, false)) {
-      if (stream.match(/u\w{4}/)) return "a";
+      if (stream.match(/u\w{4}/)) return "def";
       if (stream.match(/u/)) return "err";
 
-      if (stream.match(/x\w{2}/)) return "a";
+      if (stream.match(/x\w{2}/)) return "def";
       if (stream.match(/x/)) return "err";
 
-      if (stream.match(/./)) return "a";
+      if (stream.match(/./)) return "def";
 
-      return "a";
+      return "def";
     }
 
 
     if (ch == "{"){
-      if (stream.match(/(\d|\d,\d?)\}/))  return "a";
+      if (stream.match(/(\d|\d,\d?)\}/))  return "def";
     }
 
     if (ch == "[" && stream.match(/[^\]]+\]/)){
-      return "b";
+      return "variable-2";
     }
 
     if (ch == "|") {
@@ -43,7 +43,7 @@ CodeMirror.defineMode("regex", function() {
     }
 
     if (otherChar.test(ch)) {
-      return "a";
+      return "def";
     }
   };
 

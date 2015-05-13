@@ -32,6 +32,13 @@
 
 .cm-s-base16-default-dark .CodeMirror-matchingbracket { text-decoration: underline; color: white !important;}
 
+.cm-s-base16-default-dark span.cm-g1{color: #aa759f;}
+.cm-s-base16-default-dark span.cm-g2{color: #9ec70c;}
+.cm-s-base16-default-dark span.cm-g3{color: #ecc9f7;}
+.cm-s-base16-default-dark span.cm-g4{color: #54b70b;}
+.cm-s-base16-default-dark span.cm-g5{color: #b688cf;}
+
+
 /*.cm-s-default span.cm-a{background: #aad1f7;}
 .cm-s-default span.cm-b{background: #f9ca69;}
 .cm-s-default span.cm-c{color: #007a09;}
