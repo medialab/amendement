@@ -7,7 +7,8 @@ function MyCustomGrammar() {
   var def = this.def.bind(this);
 
   def(
-    /compléter (?:(?:cet |l')amendement|(?:cet |l')article) par (?:la phrase|l'alinéa) suivante? :.*?« ([^»]*) »/gi,
+    'Complete'
+    /Compléter ?(ainsi )?(?:la (première|seconde|deuxième|troisième|dernière) phrase de )?(?:(?:cet |l')amendement|(?:cet |l')article|(?:cet |l')alinéa (\d+))( par (?:la phrase|l'alinéa|les? mots?|les? mots? et la phrase))?(?: suivant[es]?)? ? ?:.*?« ([^»]*) »/gi,
     function(content) {
       return {
         IDrule: 1,
@@ -16,6 +17,18 @@ function MyCustomGrammar() {
       };
     }
   );
+
+  // def(
+  //   /.*(compléter).*alinéa (\d+).*«([^»]*)»/i,
+  //   function(operation, where, content) {
+  //     return {
+  //       IDrule: 7,
+  //       operation: 'ajouter:mots',
+  //       alinea: +where,
+  //       content: content.trim()
+  //     }
+  //   }
+  // );
 
   def(
     /(?:(?:À (la fin de )?|(Au début de )?)(?:la (première|seconde|deuxième|troisième) phrase de )?l'alinéa (\d+), )?substituer (?:aux? mots?|aux? nombres?|(?:à la|aux) références?) :.*?« ([^»]*) ».*?(les? mots?|les? nombres?|la phrase et les? mots? suivants?|(?:la|les?) références?) ?:.*?« ([^»]*) »/,
@@ -118,40 +131,12 @@ function MyCustomGrammar() {
   );
 
   def(
-    /Supprimer les alinéas (\d+) (à|et) (\d+)/,
-    function(from, operand, to) {
-      var order = {
-        IDrule: 6,
-        operation: 'supprimer:alinea'
-      };
-
-      if (operand === 'à') {
-        order.from = +from;
-        order.to = +to;
-      }
-      else if (operand === 'et') {
-        order.alineas = [+from, +to];
-      }
-      else {
-        throw Error('supprimer:alinea rule - unknown operand "' + operand + '".');
-      }
-
-      return order;
-    }
-  );
-
-  def(
-    /Supprimer ((?:la (première|seconde|deuxième|troisième) phrase de )?l'alinéa (\d+)|cet article)/,
-    function(what, phrase, where) {
+    /Supprimer ((?:la (première|seconde|deuxième|troisième) phrase de )?(?:l'alinéa|les alinéas)? (\d+)(?: (à|et) (\d+))?|cet article)/,
+    function(what, phrase, from, operand, to) {
       var type = {
-        IDrule: 7,
+        IDrule: 6,
         operation: 'supprimer:',
       };
-
-      if (phrase != undefined) {
-        type.operation += 'phrase';
-        type.phrase = phrase;
-      }
 
       if (what.match(/article/))
         type.operation += 'article';
@@ -159,22 +144,29 @@ function MyCustomGrammar() {
       if (what.match(/alinéa/))
         type.operation += 'alinea';
 
-      if (where != undefined)
-        type.where = +where
+      if (phrase != undefined) {
+        type.operation = 'supprimer:phrase';
+        type.phrase = phrase;
+      }
+
+      if (!what.match(/article/)){
+        if (operand === 'à') {
+          type.from = +from;
+          type.to = +to;
+        }
+        else if (operand === 'et') {
+          type.alineas = [+from, +to];
+        }
+        else if (operand === undefined){
+          type.alinea = +from;
+        }
+        else {
+          throw Error('supprimer:alinea rule - unknown operand "' + operand + '".');
+        }
+      }
+
 
       return type;
-    }
-  );
-
-  def(
-    /.*(compléter).*alinéa (\d+).*«([^»]*)»/i,
-    function(operation, where, content) {
-      return {
-        IDrule: 8,
-        operation: 'ajouter:mots',
-        alinea: +where,
-        content: content.trim()
-      }
     }
   );
 
@@ -182,7 +174,7 @@ function MyCustomGrammar() {
     /Rédiger ainsi.*alinéa (\d+) :.*?« ([^»]*) »/i,
     function(where, content) {
       return {
-        IDrule: 9,
+        IDrule: 8,
         operation: 'rediger:alinéa',
         alinea: +where,
         content: content
@@ -196,7 +188,7 @@ function MyCustomGrammar() {
 
       // TODO: parse the reason?
       return {
-        IDrule: 10,
+        IDrule: 9 ,
         operation: 'supprimer:amendement',
         irrecevable: true
       };
