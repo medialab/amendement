@@ -1,3 +1,8 @@
+/**
+ * Amendements Parsing
+ * ====================
+ *
+ */
 var chalk = require('chalk'),
     util = require('util'),
     rules = require('./rules.js'),

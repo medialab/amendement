@@ -1,3 +1,8 @@
+/**
+ * Amendements Rules
+ * ====================
+ *
+ */
 var Grammar = require('./lib/grammar.js')
 
 function MyCustomGrammar() {
