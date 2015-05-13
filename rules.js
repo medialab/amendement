@@ -51,13 +51,12 @@ function MyCustomGrammar() {
   );
 
   def(
-    /(?:(?:(?:À |A )(la fin de )?|(Au début de )?)(?:la (première|seconde|deuxième|troisième) phrase de )?l'alinéa (\d+), )?(?:après (?:la (première|dernière) occurrence de )?(?:les? mots?|l(?:a|es?) références?) :.*?« ([^»]*) », )?insérer (les? mots?|(?:la|les?) références?) :.*?« ([^»]*) »/i,
+    /(?:(?:(?:À |A )(la fin de )?|(Au début de )?)(?:la (première|seconde|deuxième|troisième|dernière) phrase de )?l'alinéa (\d+), )?(?:après (?:la (première|dernière) occurrence de )?(?:les? mots?|l(?:a|es?) références?) :.*?« ([^»]*) », )?insérer (les? mots?|la phrase suivante|(?:la|les) réferences?) :.*?« ([^»]*) »/i,
     function(fin, debut, phrase, where, occurrence, target, typereplace, replacement) {
       var type = {
         IDrule: 3,
         operation: 'insérer:',
         alinea: +where,
-
         replacement: replacement
       };
 
@@ -69,11 +68,11 @@ function MyCustomGrammar() {
 
       if (debut != undefined)
         type.debut = "début"
+      if (fin != undefined)
+        type.fin = "fin"
 
-      if (occurrence == 'première')
-        type.occurrence = "première occurrence"
-      else if (occurrence == 'dernière')
-        type.occurrence == "dernière occurrence"
+      if (occurrence != undefined)
+        type.occurrence = occurrence
 
       if (typereplace.match(/les? mots?/))
         type.operation += "mot";
@@ -119,33 +118,10 @@ function MyCustomGrammar() {
   );
 
   def(
-    /(?:(?:À (la fin de )?|(Au début de )?)(?:la (première|seconde|deuxième|troisième) phrase de )?l'alinéa (\d+), )?insérer (?:les? mots?|la phrase suivante|(?:la|les) réferences?) :.*?« ([^»]*) »/i,
-    function(fin, debut, phrase, where, target) {
-      var type = {
-        IDrule: 6,
-        operation: 'insérer:phrase',
-        alinea: +where,
-        phrase: phrase,
-        target: target
-      };
-
-      if (phrase != undefined)
-        type.phrase = phrase
-
-      if (fin != undefined)
-        type.fin = 'fin'
-      else if (debut != undefined)
-        type.debut = 'debut'
-
-      return type
-    }
-  );
-
-  def(
     /Supprimer les alinéas (\d+) (à|et) (\d+)/,
     function(from, operand, to) {
       var order = {
-        IDrule: 7,
+        IDrule: 6,
         operation: 'supprimer:alinea'
       };
 
@@ -168,7 +144,7 @@ function MyCustomGrammar() {
     /Supprimer ((?:la (première|seconde|deuxième|troisième) phrase de )?l'alinéa (\d+)|cet article)/,
     function(what, phrase, where) {
       var type = {
-        IDrule: 8,
+        IDrule: 7,
         operation: 'supprimer:',
       };
 
@@ -194,7 +170,7 @@ function MyCustomGrammar() {
     /.*(compléter).*alinéa (\d+).*«([^»]*)»/i,
     function(operation, where, content) {
       return {
-        IDrule: 9,
+        IDrule: 8,
         operation: 'ajouter:mots',
         alinea: +where,
         content: content.trim()
@@ -206,7 +182,7 @@ function MyCustomGrammar() {
     /Rédiger ainsi.*alinéa (\d+) :.*?« ([^»]*) »/i,
     function(where, content) {
       return {
-        IDrule: 10,
+        IDrule: 9,
         operation: 'rediger:alinéa',
         alinea: +where,
         content: content
@@ -220,7 +196,7 @@ function MyCustomGrammar() {
 
       // TODO: parse the reason?
       return {
-        IDrule: 11,
+        IDrule: 10,
         operation: 'supprimer:amendement',
         irrecevable: true
       };
