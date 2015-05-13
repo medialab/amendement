@@ -1,0 +1,47 @@
+body {
+  margin: 30px;
+}
+
+#mount {
+  margin: 0px;
+  padding: 0px;
+}
+
+.rules-list {
+  list-style-type: none;
+  height: 700px;
+  overflow-y: scroll;
+}
+
+.rules-list > li {
+  margin-bottom: 20px;
+  padding: 10px;
+  cursor: pointer;
+  background-color: #ccc;
+}
+
+.amendements-list {
+  list-style-type: none;
+  height: 700px;
+  overflow-y: scroll;
+}
+
+.amendements-list > li {
+  margin-bottom: 20px;
+  padding: 10px;
+  cursor: pointer;
+  background-color: #ccc;
+}
+
+.amendements-list > li.matched {
+  background-color: #ccffcc;
+}
+
+.amendements-list > li.unmatched {
+  background-color: #f28282;
+}
+
+.regex {
+  height: 300px;
+  border: 1px solid black;
+}
