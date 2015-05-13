@@ -7,6 +7,7 @@ import React, {Component} from 'react';
 import Row from 'react-bootstrap/lib/Row';
 import Col from 'react-bootstrap/lib/Col';
 import Regex from './regex.jsx';
+import Stats from './stats.jsx';
 
 export default class Panel extends Component {
   render() {
@@ -17,7 +18,7 @@ export default class Panel extends Component {
             <Regex />
           </Col>
           <Col className="stats title" md={4}>
-            STATS
+            <Stats />
           </Col>
         </Row>
         <Row>

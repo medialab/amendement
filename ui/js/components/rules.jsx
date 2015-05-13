@@ -10,15 +10,28 @@ import PropTypes from 'baobab-react/prop-types';
 @branch({
   cursors: {
     rules: ['rules']
+  },
+  facets: {
+    matches: 'globalMatches'
   }
 })
 export default class RulesList extends Component {
   renderRule(rule, i) {
-    return <Rule key={i} order={i} data={rule} />;
+    return <Rule key={i}
+                 data={rule}
+                 count={this.counts[rule.name] || 0} />;
   }
 
   render() {
-    return <ul className="rules-list">{this.props.rules.map(this.renderRule)}</ul>;
+    const {rules, matches} = this.props;
+
+    this.counts = _(matches)
+      .compact()
+      .groupBy('name')
+      .mapValues(a => a.length)
+      .value();
+
+    return <ul className="rules-list">{rules.map(this.renderRule.bind(this))}</ul>;
   }
 }
 
@@ -32,6 +45,8 @@ class Rule extends Component {
   }
 
   render() {
-    return <li onClick={this.handleClick.bind(this)}>{`Rule : ${this.props.data.name}`}</li>;
+    const {data: {name}, count} = this.props;
+
+    return <li onClick={this.handleClick.bind(this)}>{`Rule : ${name} (${count})`}</li>;
   }
 }

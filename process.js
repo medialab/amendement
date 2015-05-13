@@ -4,7 +4,7 @@
  *
  * Filtering & cleaning the amendements before actually parsing them.
  */
-function preprocess(txt) {
+function clean(txt) {
   return txt
     .replace(/\s/g, ' ')
     .replace(/<\/p><p>/g, ' ')
@@ -14,6 +14,7 @@ function preprocess(txt) {
 module.exports = function(amendements) {
   return amendements
     .map(function(row) {
+      row.amendement.texte = clean(row.amendement.texte);
       return row.amendement;
     })
     .filter(function(a) {

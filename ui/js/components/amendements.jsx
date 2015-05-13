@@ -11,27 +11,27 @@ import {branch} from 'baobab-react/decorators';
     amendements: ['amendements']
   },
   facets: {
-    regex: 'regex'
+    matches: 'globalMatches'
   }
 })
 export default class AmendementsList extends Component {
-  renderRule(amendement, i) {
+  renderRule([amendement, match]) {
     return <Amendement key={amendement.id}
-                       order={i}
                        data={amendement}
-                       regex={this.props.regex} />;
+                       matched={!!match} />;
   }
 
   render() {
-    return <ul className="amendements-list">{this.props.amendements.map(this.renderRule.bind(this))}</ul>;
+    const zipped = _.zip(this.props.amendements, this.props.matches);
+
+    return <ul className="amendements-list">{zipped.map(this.renderRule)}</ul>;
   }
 }
 
 class Amendement extends Component {
   render() {
-    const txt = this.props.data.texte,
-          matched = !!txt.match(this.props.regex);
+    const {data: {texte}, matched} = this.props;
 
-    return <li className={matched ? 'matched' : 'unmatched'}>{txt}</li>;
+    return <li className={matched ? 'matched' : 'unmatched'}>{texte}</li>;
   }
 }
