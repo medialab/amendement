@@ -22,6 +22,7 @@ export default class Regex extends Component {
     this.editor = CodeMirror.fromTextArea(
       node,
       {
+        theme: 'base16-dark',
         mode: 'regex',
         lineWrapping: true
       }
@@ -36,7 +37,7 @@ export default class Regex extends Component {
       this.editor.doc.setValue(this.props.regex || '');
 
     return (
-      <div>
+      <div className="regex-editor">
         <textarea ref="editor" />
       </div>
     );

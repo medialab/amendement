@@ -47,6 +47,10 @@ body {
   border: 1px solid black;
 }
 
+.regex-editor {
+  height: 100%;
+}
+
 .title {
   margin-top: 3px;
   padding-top: 1px;
