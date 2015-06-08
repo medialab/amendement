@@ -12,6 +12,29 @@ function MyCustomGrammar() {
   var def = this.def.bind(this);
 
   def(
+    'TRIPLETRIPLE',
+    /(I\. –.*)(II\. –.*)(III\. –.*)/,
+    function(first, second, third) {
+      return {
+        first: first,
+        second: second,
+        third: third
+      }
+    }
+  );
+
+  def(
+    'DOUBLEDOUBLE',
+    /(I\. –.*)(II\. –.*)/,
+    function(first, second, third) {
+      return {
+        first: first,
+        second: second,
+      }
+    }
+  );
+
+  def(
     'Complete',
     /Compléter ?(?:ainsi )?(?:la (première|seconde|deuxième|troisième|dernière) phrase de )?((?:cet |l')amendement|(?:cet |l')article|(?:cet |l')alinéa (\d+))(?: par (la phrase|l'alinéa|les? mots?|les? mots? et la phrase))?(?: suivant[es]?)? ? ?:.*?« ([^»]*) »/i,
     function(phrase, what, where, ajout, content) {
@@ -181,8 +204,6 @@ function MyCustomGrammar() {
           throw Error('supprimer:alinea rule - unknown operand "' + operand + '".');
         }
       }
-
-
       return type;
     }
   );
