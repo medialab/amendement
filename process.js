@@ -19,7 +19,12 @@ module.exports = function(amendements) {
     })
     .filter(function(a) {
       return !(a.sort === "Irrecevable" ||
+               a.sort === "Rejeté" ||
+               a.sort === "Tombe" ||
+               a.sort === "Retiré" ||
+               a.sort === "Non soutenu" ||
                a.sujet.match(/^article additionnel/i)) &&
-               a.source.match(/assemblee-nationale/);
+               a.source.match(/assemblee-nationale/) &&
+               a.sujet === "article 1er";
     });
 };

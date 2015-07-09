@@ -37,28 +37,65 @@ recevables.forEach(function(amendement, i){
   var output = '';
 
   if (!result) {
-    output = chalk.red('No match for:') + ' ' + _.trunc(amendement.texte, 100);
+    output = chalk.red('No match for:') + ' ' + amendement.texte; //_.trunc(amendement.texte, 100);
   }
   else {
     matches++;
-    output = chalk.green('Match for:') + ' ' + _.trunc(amendement.texte, 100);
+    output = chalk.green('Match for:') + ' ' + amendement.texte; //_.trunc(amendement.texte, 100);
     output += '\n' + util.inspect(result);
   }
   output += '\n';
 
-  // Trying to do things
+  //Trying to apply rulez
   if ((result) && (result.name == "Supprimer")) {
-    console.log(output);
-    alinea = leadingzeros(result.alinea);
-    if (result.target) {
-      texte_original[alinea] = texte_original[alinea].replace(result.target, '').replace(/(\s)+/g, '$1');
-    }
-    else {
-      delete texte_original[alinea];      
+    var alinea = leadingzeros(result.alinea).toString();
+    if (texte_original[alinea] != undefined) {
+      if (result.target.match(/L. [0-9]+/)) {
+        result.target = result.target.replace(/‑/g,'-');
+      }
+      if (result.target) {  
+        if (result.phrase) {
+          // Need to split phrases
+        }
+        texte_original[alinea] = texte_original[alinea].replace(result.target, '').replace(/(\s)+/g, '$1');
+      }
+      else {
+        delete texte_original[alinea];      
+      } 
+    } 
+  } 
+
+  if ((result) && (result.name == "Substituer")) {
+    var alinea = leadingzeros(result.alinea).toString();
+    if (texte_original[alinea] != undefined) {
+      if (result.target.match(/L. [0-9]+/)) {
+        result.target = result.target.replace(/‑/g,'-');
+      }
+      texte_original[alinea] = texte_original[alinea].replace(result.target, result.replacement);
     }
   }
+
+  if ((result) && (result.name == "Complete")) {
+    var alinea = leadingzeros(result.alinea).toString();
+    if (texte_original[alinea] != undefined) {
+      character = result.content.substring(0,1);
+      if (character == character.toUpperCase()) {
+        texte_original[alinea] += " " + result.content;
+      }
+      if (character == character.toLowerCase()){
+        texte_original[alinea] = texte_original[alinea].substring(0, (texte_original[alinea].length - 1)) + " " + result.content;
+      }  
+
+    }   
+  }
+
+  // if (output.match(/no match for/i)) {
+  //   console.log(output);    
+  // }
+  console.log(output);
 });
-fs.writeFileSync('diffff.json', JSON.stringify(texte_original, null, 2));
+
+fs.writeFileSync('law_output.json', JSON.stringify(texte_original, null, 2));
 
 function leadingzeros(number) {
   return _.padLeft(number, 3, '0'); 
