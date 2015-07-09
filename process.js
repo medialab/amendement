@@ -2,7 +2,7 @@
  * Amendements Processing
  * =======================
  *
- * Filtering & cleaning the amendements before actually parsing them.
+ * Filtering & cleaning the amendements before actually king them.
  */
 function clean(txt) {
   return txt
@@ -24,7 +24,6 @@ module.exports = function(amendements) {
                a.sort === "Retiré" ||
                a.sort === "Non soutenu" ||
                a.sujet.match(/^article additionnel/i)) &&
-               a.source.match(/assemblee-nationale/) &&
-               a.sujet === "article 1er";
+               a.source.match(/assemblee-nationale/);
     });
 };

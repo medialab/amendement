@@ -11,7 +11,7 @@ var chalk = require('chalk'),
     _ = require('lodash'),
     fs = require('fs');
 
-var texte_original = require('./data/textA001.json').alineas;
+var texte_original = require('./data/allarticles_renseignement.json').articles;
 var amendements = require('./data/renseignement.json').amendements;
 // var scaling = requireDir('./data/amdmts/');
 // amendements = _(scaling).values().map('amendements').flatten().value().concat(amendements);
@@ -20,6 +20,7 @@ var matches = 0,
     results = [],
     recevables = process(amendements),
     bylaw = {};
+
 
 recevables.forEach(function(amendement, i){
   var result = rules.parse(amendement.texte);
@@ -30,6 +31,10 @@ recevables.forEach(function(amendement, i){
   if (result) {
     result.texteloi_id = amendement.texteloi_id;
   }
+
+  article = amendement.sujet.replace('article ', '').trim();
+  var matchingarticle = texte_original.filter(function(row){ return row.titre == article;});
+  console.log(matchingarticle);
 
   results.push(result);
 
@@ -85,14 +90,15 @@ recevables.forEach(function(amendement, i){
       if (character == character.toLowerCase()){
         texte_original[alinea] = texte_original[alinea].substring(0, (texte_original[alinea].length - 1)) + " " + result.content;
       }  
-
     }   
   }
+
+
 
   // if (output.match(/no match for/i)) {
   //   console.log(output);    
   // }
-  console.log(output);
+  //console.log(output);
 });
 
 fs.writeFileSync('law_output.json', JSON.stringify(texte_original, null, 2));
