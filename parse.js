@@ -21,20 +21,19 @@ var matches = 0,
     recevables = process(amendements),
     bylaw = {};
 
-
 recevables.forEach(function(amendement, i){
   var result = rules.parse(amendement.texte);
 
   bylaw[amendement.texteloi_id] = bylaw[amendement.texteloi_id] || 0;
   bylaw[amendement.texteloi_id] += 1;
 
-  if (result) {
-    result.texteloi_id = amendement.texteloi_id;
-  }
-
   article = amendement.sujet.replace('article ', '').trim();
   var matchingarticle = texte_original.filter(function(row){ return row.titre == article;});
-  console.log(matchingarticle);
+
+  if (result) {
+    result.texteloi_id = amendement.texteloi_id;
+    result.article = article;
+  }
 
   results.push(result);
 
@@ -98,7 +97,7 @@ recevables.forEach(function(amendement, i){
   // if (output.match(/no match for/i)) {
   //   console.log(output);    
   // }
-  //console.log(output);
+  console.log(output);
 });
 
 fs.writeFileSync('law_output.json', JSON.stringify(texte_original, null, 2));
