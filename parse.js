@@ -28,7 +28,7 @@ recevables.forEach(function(amendement, i){
   bylaw[amendement.texteloi_id] += 1;
 
   article = amendement.sujet.replace('article ', '').trim();
-  var matchingarticle = texte_original.filter(function(row){ return row.titre == article;});
+  var matchingarticle = texte_original.filter(function(row){ return row.titre == article;})[0].alineas;
 
   if (result) {
     result.texteloi_id = amendement.texteloi_id;
@@ -53,7 +53,7 @@ recevables.forEach(function(amendement, i){
   //Trying to apply rulez
   if ((result) && (result.name == "Supprimer")) {
     var alinea = leadingzeros(result.alinea).toString();
-    if (texte_original[alinea] != undefined) {
+    if (matchingarticle[alinea] != undefined) {
       if (result.target.match(/L. [0-9]+/)) {
         result.target = result.target.replace(/‑/g,'-');
       }
@@ -61,43 +61,45 @@ recevables.forEach(function(amendement, i){
         if (result.phrase) {
           // Need to split phrases
         }
-        texte_original[alinea] = texte_original[alinea].replace(result.target, '').replace(/(\s)+/g, '$1');
+        matchingarticle[alinea] = matchingarticle[alinea].replace(result.target, '').replace(/(\s)+/g, '$1');
       }
       else {
-        delete texte_original[alinea];      
+        delete matchingarticle[alinea];      
       } 
     } 
   } 
 
   if ((result) && (result.name == "Substituer")) {
     var alinea = leadingzeros(result.alinea).toString();
-    if (texte_original[alinea] != undefined) {
+    if (matchingarticle[alinea] != undefined) {
       if (result.target.match(/L. [0-9]+/)) {
         result.target = result.target.replace(/‑/g,'-');
       }
-      texte_original[alinea] = texte_original[alinea].replace(result.target, result.replacement);
+      matchingarticle[alinea] = matchingarticle[alinea].replace(result.target, result.replacement);
     }
   }
 
   if ((result) && (result.name == "Complete")) {
     var alinea = leadingzeros(result.alinea).toString();
-    if (texte_original[alinea] != undefined) {
+    if (matchingarticle[alinea] != undefined) {
       character = result.content.substring(0,1);
       if (character == character.toUpperCase()) {
-        texte_original[alinea] += " " + result.content;
+        matchingarticle[alinea] += " " + result.content;
       }
       if (character == character.toLowerCase()){
-        texte_original[alinea] = texte_original[alinea].substring(0, (texte_original[alinea].length - 1)) + " " + result.content;
+        matchingarticle[alinea] = matchingarticle[alinea].substring(0, (matchingarticle[alinea].length - 1)) + " " + result.content;
       }  
     }   
   }
 
-
+  //delete texte_original.filter(function(row){ return row.titre == article;})[0].alineas;
+  //texte_original.filter(function(row){ return row.titre == article;}).push(matchingarticle);
+  //console.log(texte_original);
 
   // if (output.match(/no match for/i)) {
   //   console.log(output);    
   // }
-  console.log(output);
+  //console.log(output);
 });
 
 fs.writeFileSync('law_output.json', JSON.stringify(texte_original, null, 2));
