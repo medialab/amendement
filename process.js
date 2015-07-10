@@ -18,11 +18,11 @@ module.exports = function(amendements) {
       return row.amendement;
     })
     .filter(function(a) {
-      return !(a.sort === "Irrecevable" ||
-               a.sort === "Rejeté" ||
-               a.sort === "Tombe" ||
-               a.sort === "Retiré" ||
-               a.sort === "Non soutenu" ||
+      return !(a.sort != "Adopté" ||
+               // a.sort === "Rejeté" ||
+               // a.sort === "Tombe" ||
+               // a.sort === "Retiré" ||
+               // a.sort === "Non soutenu" ||
                a.sujet.match(/^article additionnel/i)) &&
                a.source.match(/assemblee-nationale/);
     });

@@ -92,6 +92,21 @@ recevables.forEach(function(amendement, i){
     }   
   }
 
+  if ((result) && (result.name == "Insérer")) {
+    var alinea = leadingzeros(result.alinea).toString();
+    if (matchingarticle[alinea] != undefined) {
+      if (result.phrase) {
+          // Need to split phrases
+      }
+      console.log(output);
+      console.log(matchingarticle[alinea]);
+      console.log('\n');
+      matchingarticle[alinea] = matchingarticle[alinea].replace(result.target, result.target + " " + result.replacement);
+      console.log(matchingarticle[alinea]);
+      console.log('\n');
+    }
+  }
+
   //delete texte_original.filter(function(row){ return row.titre == article;})[0].alineas;
   //texte_original.filter(function(row){ return row.titre == article;}).push(matchingarticle);
   //console.log(texte_original);
